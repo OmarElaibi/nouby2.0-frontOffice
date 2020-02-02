@@ -1,0 +1,146 @@
+ <!-- Begin Page Content -->
+ <div class="container-fluid">
+
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Helpers - Specialities</h1>
+    <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-5 my-2 my-md-0 mw-100 navbar-search shadow ">
+      <div class="input-group">
+        <input type="text" class="form-control border-0 small" placeholder="Search for..." [(ngModel)]="searchTerm">
+        <div class="input-group-append">
+          <button class="btn btn-light search" type="button" disabled>
+            <i class="fas fa-search fa-sm"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" data-toggle="modal" data-target="#SpecialityModal"><i class="fas fa-download fa-sm text-50"></i> New Speciality</button>
+  </div>
+
+  <!-- Content Row -->
+  <div class="row">
+
+    <table class="table shadow table-borderless">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Label</th>
+          <th scope="col" class="float-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let speciality of allSpecialities | paginate: { itemsPerPage: 7, currentPage: page} | filter: searchTerm">
+          <th scope="row">{{speciality.id}}</th>
+          <td>{{speciality.label}}</td>
+          <td  class="float-right">
+            <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="getSpecialityById(speciality.id)"><i class="fas fa-pen fa-sm text-50"></i></button>
+            <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="deleteModal(speciality.id)"><i class="fas fa-trash fa-sm text-50"></i></button>
+          </td>
+        </tr>
+
+      </tbody>
+      <tfoot class="justify-content-center">
+        <tr>
+          <td colspan="3" class="text-center">
+            <pagination-controls class="shadow" maxSize="4" directionLinks="true" autoHide="true" responsive="true"
+              previousLabel="Previous" nextLabel="Next" (pageChange)="page = $event"></pagination-controls>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+  </div>
+
+            <!-- /.container-fluid -->
+
+</div>
+<!-- End of Main Content -->
+
+
+
+
+<!-- Add Speciality Modal -->
+<div class="modal fade" id="SpecialityModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New Speciality</h5>
+        <button #closeAddModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="mx-auto" [formGroup]="specialityForm" (ngSubmit)="addSpeciality()">
+          <div class="form-group">
+            <label for="inputName">Label</label>
+            <input type="text" class="form-control shadow" id="inputName" placeholder="Label" formControlName="label"
+            required>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+            <button type="submit" [disabled]="!specialityForm.valid" class="btn btn-success shadow">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Add Speciality Modal  -->
+
+<!-- Edit Speciality Modal -->
+
+<div class="modal fade" id="editSpecialityModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Speciality</h5>
+        <button #closeUpdateModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="mx-auto" [formGroup]="specialityUpdateForm" (ngSubmit)="updateSpeciality()">
+          <input type="hidden" formControlName="id" id="id" required>
+          <div class="form-group">
+            <label for="inputName2">Label</label>
+            <input type="text" class="form-control shadow" id="inputName2" placeholder="Label" formControlName="label"
+            required>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+            <button type="submit" [disabled]="!specialityUpdateForm.valid" class="btn btn-success shadow">Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Edit Speciality Modal  -->
+
+<!-- Delete Patient Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ready to Delete?</h5>
+        <button #closeDeleteModal class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Are you sure that you want Delete this column</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary shadow" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger shadow" (click)="deleteSpeciality(deletedSpecialityId)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Delete Patient Modal -->
+
+<button #openUpdateModal data-toggle="modal" data-target="#editSpecialityModal" class="invisible"></button>
+<button #openDeleteModal data-toggle="modal" data-target="#deleteModal" class="invisible"></button>

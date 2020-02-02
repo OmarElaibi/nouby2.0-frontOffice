@@ -1,0 +1,369 @@
+ <!-- Content Wrapper -->
+ <div id="content-wrapper" class="d-flex flex-column">
+
+  <!-- Main Content -->
+  <div id="content">
+
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top">
+
+      <div class="sidebar sidebar-dark accordion">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-calendar text-gray-300" style="color: var(--success) !important;"></i>
+          </div>
+          <div class="sidebar-brand-text mx-3">Noubty <sup>2.0</sup></div>
+        </a>
+      </div>
+
+      <!-- Sidebar Toggle (Topbar) -->
+      <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+      </button> -->
+
+      <!-- Topbar Search -->
+      <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-5 my-2 my-md-0 mw-100 navbar-search shadow ">
+        <div class="input-group">
+          <input type="text" class="form-control border-0 small" placeholder="search for CIN" [(ngModel)]="searchTerm">
+          <div class="input-group-append">
+            <button class="btn btn-light search" type="button" disabled>
+              <i class="fas fa-search fa-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topbar Navbar -->
+      <ul class="navbar-nav ml-auto">
+
+        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+        <li class="nav-item dropdown no-arrow d-sm-none">
+          <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-search fa-fw"></i>
+          </a>
+          <!-- Dropdown - Messages -->
+          <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+            <form class="form-inline mr-auto w-100 navbar-search">
+              <div class="input-group">
+                <input type="text" class="form-control shadow border-0 small" placeholder="CIN..." aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <button class="btn btn-success" type="button">
+                    <i class="fas fa-search fa-sm"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </li>
+
+
+        <div class="topbar-divider d-none d-sm-block"></div>
+
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow">
+          <a class="nav-link" id="userDropdown" role="button" data-toggle="modal" data-target="#logoutModal" aria-haspopup="true" aria-expanded="false">
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Receptionist - {{currentReceptionist.fullName}}</span>
+            <i class="fa fa-power-off" aria-hidden="true"></i>
+          </a>
+          <!-- Dropdown - User Information -->
+
+        </li>
+
+      </ul>
+
+    </nav>
+    <!-- End of Topbar -->
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid px-5">
+
+      <!-- Page Heading -->
+      <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800 border-left-success pl-3">Patitents List</h1>
+        <a class="d-none d-sm-inline-block btn btn-sm shadow-sm" data-toggle="modal" data-target="#PatientModal"><i class="fas fa-download fa-sm text-50"></i> Add Patient</a>
+      </div>
+
+      <!-- Content Row -->
+      <div class="row">
+
+        <table class="table shadow table-borderless">
+          <thead>
+            <tr>
+              <th scope="col" class=" text-center">Mutualized</th>
+              <th scope="col">CIN</th>
+              <th scope="col">Full Name</th>
+              <th scope="col">Age</th>
+              <th scope="col">Civil Status</th>
+              <th scope="col">Tel</th>
+              <th scope="col">Email</th>
+              <th scope="col" class="text-center">Add Appointment</th>
+              <th scope="col" class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let patient of allPatients | paginate: { itemsPerPage: 7, currentPage: page} | filter: searchTerm">
+              <td class=" text-center">
+                <i [className]="patient.mutualized ? 'fas fa-circle text-success' : 'fas fa-circle text-danger'"></i>
+              </td>
+              <td>{{patient.cin}}</td>
+              <td>{{patient.firstName}} {{patient.lastName}}</td>
+              <td>{{patient.age}}</td>
+              <td>{{patient.civilStatus}}</td>
+              <td>{{patient.tel}}</td>
+              <td>{{patient.email}}</td>
+              <td>
+                <!-- {{patient.app}} -->
+                <div class="text-center">
+                  <!-- <a class="d-none d-sm-inline-block btn btn-sm shadow-sm" data-toggle="modal" data-target="#editMotifModal"><i class="fas fa-pen fa-sm text-50"></i></a> -->
+                  <a class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="appointmentModal(patient.id)"><i class="fas fa-plus fa-sm text-50"></i></a>
+                </div>
+              </td>
+              <td>
+                <div class="float-right">
+                  <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="getPatientById(patient.id)"><i class="fas fa-pen fa-sm text-50"></i></button>
+                  <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="deleteModal(patient.id)"><i class="fas fa-trash fa-sm text-50"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="justify-content-center">
+            <tr>
+              <td colspan="3" class="text-center">
+                <pagination-controls class="shadow" maxSize="4" directionLinks="true" autoHide="true" responsive="true"
+                  previousLabel="Previous" nextLabel="Next" (pageChange)="page = $event"></pagination-controls>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+
+      </div>
+
+                <!-- /.container-fluid -->
+
+  </div>
+  <!-- End of Main Content -->
+
+</div>
+<!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+ <!-- Logout Modal-->
+ <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+        <button #closeLogoutModal class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-success" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Logout Modal -->
+
+ <!-- Delete Patient Modal-->
+ <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ready to Delete?</h5>
+        <button #closeDeleteModal class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Are you sure that you want Delete this column</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary shadow" type="button" data-dismiss="modal">Cancel</button>
+        <button (click)="deletePatient(deletedPatientId)" class="btn btn-danger shadow">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Delete Patient Modal -->
+
+<!-- Edit Motif Modal -->
+
+<div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Appointment</h5>
+        <button #closeAppointmentAddModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="appointmentForm" (ngSubmit)="addAppointmentToPatient()">
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">what is the reason ?</label>
+              <input type="text" class="form-control shadow" id="recipient-name" formControlName="motif"
+              required>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+          <button type="submit" [disabled]="!appointmentForm.valid" class="btn btn-success shadow">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- End Edit Motif Modal  -->
+
+<!-- Add Patient Modal -->
+
+<div class="modal fade" id="PatientModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Patient</h5>
+        <button #closeAddModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="mx-auto" [formGroup]="patientForm" (ngSubmit)="addPatient()">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="fname">First Name</label>
+              <input type="text" class="form-control shadow" id="fname" placeholder="First Name" formControlName="firstName"
+              required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="lname">Last Name</label>
+              <input type="lext" class="form-control shadow" id="fname" placeholder="Last Name" formControlName="lastName"
+              required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Civil Status</label>
+            <select class="form-control shadow" id="exampleFormControlSelect1" formControlName="civilStatus" required>
+              <option value="" disabled selected>Select patient civil status</option>
+              <option>Single</option>
+              <option>Engaged</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputEmail4">Email</label>
+              <input type="email" class="form-control shadow" id="inputEmail4" placeholder="Email" formControlName="email" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputTel">Tel</label>
+              <input type="text" class="form-control shadow" id="inputTel" placeholder="Tel" formControlName="tel" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputCin">CIN</label>
+              <input type="text" class="form-control shadow" id="inputCin" placeholder="CIN" formControlName="cin" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputBirthday">Age</label>
+              <input type="number" class="form-control shadow" id="inputBirthday" placeholder="Age" formControlName="age" required>
+            </div>
+          </div>
+          <div class="custom-control custom-checkbox small my-2">
+            <input type="checkbox" class="custom-control-input" id="customCheck" formControlName="mutualized" [checked]="false">
+            <label class="custom-control-label" for="customCheck">Mutualised</label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+            <button type="submit" [disabled]="!patientForm.valid" class="btn btn-success shadow">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Add Motif Modal  -->
+
+<!-- Edit Patient Modal -->
+
+<div class="modal fade" id="editPatientModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Patient</h5>
+        <button #closeUpdateModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="mx-auto" [formGroup]="patientUpdateForm" (ngSubmit)="updatePatient()">
+          <input type="hidden" formControlName="id" id="id" required>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="fname">First Name</label>
+              <input type="text" class="form-control shadow" id="fname" placeholder="First Name" formControlName="firstName"
+              required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="lname">Last Name</label>
+              <input type="lext" class="form-control shadow" id="fname" placeholder="Last Name" formControlName="lastName"
+              required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Civil Status</label>
+            <select class="form-control shadow" id="exampleFormControlSelect1" formControlName="civilStatus" [compareWith]="compareFn" required>
+              <option value="" disabled selected>Select patient civil status</option>
+              <option>Single</option>
+              <option>Engaged</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputEmail4">Email</label>
+              <input type="email" class="form-control shadow" id="inputEmail4" placeholder="Email" formControlName="email" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputTel">Tel</label>
+              <input type="text" class="form-control shadow" id="inputTel" placeholder="Tel" formControlName="tel" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputCin">CIN</label>
+              <input type="text" class="form-control shadow" id="inputCin" placeholder="CIN" formControlName="cin" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputBirthday">Age</label>
+              <input type="number" class="form-control shadow" id="inputBirthday" placeholder="Age" formControlName="age" required>
+            </div>
+          </div>
+          <div class="custom-control custom-checkbox small my-2">
+            <input type="checkbox" class="custom-control-input" id="customCheck" formControlName="mutualized">
+            <label class="custom-control-label" for="customCheck">Mutualized</label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+            <button type="submit" [disabled]="!patientUpdateForm.valid" class="btn btn-success shadow">Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Edit Motif Modal  -->
+
+<button #openUpdateModal data-toggle="modal" data-target="#editPatientModal" class="invisible"></button>
+<button #openAppointmentModal data-toggle="modal" data-target="#appointmentModal" class="invisible"></button>
+<button #openDeleteModal data-toggle="modal" data-target="#deleteModal" class="invisible"></button>

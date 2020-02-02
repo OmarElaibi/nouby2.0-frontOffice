@@ -1,0 +1,153 @@
+ <!-- Begin Page Content -->
+ <div class="container-fluid px-5">
+
+   <!-- Page Heading -->
+   <div class="d-sm-flex align-items-center justify-content-between mb-4">
+     <h1 class="h3 mb-0 text-gray-800 border-left-success pl-3">Appointment List</h1>
+     <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-5 my-2 my-md-0 mw-100 navbar-search shadow ">
+      <div class="input-group">
+        <input type="text" class="form-control border-0 small" placeholder="Search for..." [(ngModel)]="searchTerm">
+        <div class="input-group-append">
+          <button class="btn btn-light search" type="button" disabled>
+            <i class="fas fa-search fa-sm"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+     <div class="btn-group btn-group-toggle shadow" data-toggle="buttons">
+       <label class="btn btn-light active" (click)="getTodayAppointments()">
+         <input type="radio" name="options" id="option1" autocomplete="off" [checked]="checkedButtonIsToday"> Today
+       </label>
+       <label class="btn btn-light px-4" (click)="getAllAppointments()">
+         <input type="radio" name="options" id="option2" autocomplete="off" [checked]="!checkedButtonIsToday"> All
+       </label>
+     </div>
+   </div>
+
+   <!-- Content Row -->
+   <div class="row">
+
+     <table class="table shadow table-borderless">
+       <thead>
+         <tr>
+           <th scope="col" class=" text-center">Done</th>
+           <th scope="col">Reason</th>
+           <th scope="col">Date</th>
+           <th scope="col">Full Name</th>
+           <th scope="col">CIN</th>
+           <th scope="col">Creator</th>
+           <th scope="col">Checking</th>
+           <th scope="col">Criticality</th>
+           <th scope="col" class="text-right">Actions</th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr
+           *ngFor="let appointment of appointments | paginate: { itemsPerPage: 3, currentPage: page} | filter: searchTerm">
+           <td class=" text-center">
+             <!-- Default switch -->
+             <div class="custom-control custom-switch">
+               <input type="checkbox" class="custom-control-input" id="customSwitches" [checked]="appointment.status"
+                 (change)="changeAppointmentStatus(appointment.id)">
+               <label class="custom-control-label" for="customSwitches"></label>
+             </div>
+           </td>
+           <td>{{appointment.motif}}</td>
+           <td>{{appointment.date | date:'short'}}</td>
+           <td>{{appointment.patient.firstName}} {{appointment.patient.lastName}}</td>
+           <td>{{appointment.patient.cin}}</td>
+           <td>{{appointment.receptionist.fullName}}</td>
+           <td>
+             - Temp: <strong *ngIf="appointment.patientTemperature !== 0">{{appointment.patientTemperature}}°</strong>
+             <strong *ngIf="appointment.patientTemperature === 0">Not checked yet</strong> <br>
+             - Weight: <strong *ngIf="appointment.patientWeight !== 0">{{appointment.patientWeight}} kg</strong> <strong
+               *ngIf="appointment.patientWeight === 0">Not checked yet</strong> <br>
+             - Blood Pressure: <strong
+               *ngIf="appointment.patientBloodPressure !== null">{{appointment.patientBloodPressure}}</strong> <strong
+               *ngIf="appointment.patientBloodPressure === null">Not checked yet</strong> <br>
+             - Allergies: <strong *ngIf="appointment.allergies !== null">{{appointment.allergies}}</strong> <strong
+               *ngIf="appointment.allergies === null">Not checked yet</strong>
+           </td>
+           <td *ngIf="appointment.criticality !== null">{{appointment.criticality.grade }}</td>
+           <td *ngIf="appointment.criticality === null">not Mentionned yet</td>
+           <td>
+             <div class="float-right">
+               <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="getAppointmentInfo(appointment.id)" data-toggle="tooltip" data-placement="left" title="Check Patient Form"><i
+                   class="fas fa-pen fa-sm text-50"></i></button>
+               <button class="d-none d-sm-inline-block btn btn-sm shadow-sm" (click)="addAppointmentToQueue(appointment.id)"
+                 data-toggle="tooltip" data-placement="right" title="Add to Queue"><i
+                   class="fas fa-plus fa-sm text-50"></i></button>
+             </div>
+           </td>
+         </tr>
+
+       </tbody>
+       <tfoot class="justify-content-center">
+         <tr>
+           <td colspan="3" class="text-center">
+             <pagination-controls class="shadow" maxSize="4" directionLinks="true" autoHide="true" responsive="true"
+               previousLabel="Previous" nextLabel="Next" (pageChange)="page = $event"></pagination-controls>
+           </td>
+         </tr>
+       </tfoot>
+     </table>
+
+   </div>
+
+   <!-- /.container-fluid -->
+
+ </div>
+ <!-- End of Main Content -->
+ <!-- Edit Patient Modal -->
+
+ <div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+   aria-hidden="true">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalLabel">Checking Patient Form</h5>
+         <button #closeUpdateModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body">
+         <form class="mx-auto" [formGroup]="appointmentForm" (ngSubmit)="updateAppointment()">
+           <input type="hidden" formControlName="id" id="id" required>
+           <div class="form-group">
+             <label for="exampleFormControlSelect1">Criticality</label>
+             <select class="form-control decorated shadow" id="exampleFormControlSelect1" formControlName="criticality" [compareWith]="compareFn" required>
+              <option [ngValue]="null" disabled>Select Criticality</option>
+              <option *ngFor="let criticality of criticalities" [ngValue]="criticality">{{criticality.grade}}</option>
+             </select>
+           </div>
+           <div class="form-row">
+             <div class="form-group col-md-3">
+               <label for="inputTemp">Temp (°C)</label>
+               <input type="number" class="form-control shadow" id="inputTemp" placeholder="Temp" formControlName="patientTemperature">
+             </div>
+             <div class="form-group col-md-3">
+               <label for="inputWgt">Weight (KG)</label>
+               <input type="number" class="form-control shadow" id="inputWgt" placeholder="Weight" formControlName="patientWeight">
+             </div>
+             <div class="form-group col-md-3">
+               <label for="inputHgt">Blood Pressure</label>
+               <input type="text" class="form-control shadow" id="inputHgt" placeholder="120/80 for example" formControlName="patientBloodPressure">
+             </div>
+             <div class="form-group col-md-3">
+               <label for="inputTension">Allergies</label>
+               <input type="text" class="form-control shadow" id="inputTension" placeholder="Tension" formControlName="allergies">
+             </div>
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-secondary shadow" data-dismiss="modal">Close</button>
+             <button type="submit" [disabled]="!appointmentForm.valid" class="btn btn-success shadow">Submit</button>
+           </div>
+         </form>
+       </div>
+     </div>
+   </div>
+ </div>
+ <!-- End Edit Motif Modal  -->
+
+
+ <button #openUpdateModal data-toggle="modal" data-target="#appointmentModal" class="invisible"></button>
