@@ -1,4 +1,4 @@
-# FrontOffice
+# Noubty2.0 FrontOffice
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
 It's the frontend of an application called Noubty2.0 which is used to manage queue lists in hospitals and clinicals.
