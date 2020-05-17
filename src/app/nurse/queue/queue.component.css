@@ -1,0 +1,11 @@
+.doctors-cards-container {
+    overflow-y: scroll;
+    height: 530px;
+    border-radius: .5rem;
+    border: 5px solid var(--success);
+}
+
+.queue-container {
+    height: 530px;
+    border-radius: .5rem;
+}

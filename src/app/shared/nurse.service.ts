@@ -51,20 +51,20 @@ export class NurseService {
   //   return this.http.patch(this.endpoint + `${nurseId}/queuers/${queuerId}`, null);
   // }
 
-  reorderQueue(nurseId, queuerId) {
-    return this.http.patch(this.endpoint + `${nurseId}/queuers/${queuerId}/absent-or-recheck`, null);
+  queuerAbsentOrRecheck(nurseId, queuerId) {
+    return this.http.patch(this.endpoint + `/${nurseId}/queuers/${queuerId}/absent-or-recheck`, null);
   }
 
   deleteQueuer(nurseId, queuerId) {
-    return this.http.delete(this.endpoint + `${nurseId}/queuers/${queuerId}`);
+    return this.http.delete(this.endpoint + `/${nurseId}/queuers/${queuerId}`);
   }
 
   changeDoctorDisponibility(nurseId, doctorId) {
-    return this.http.patch(this.endpoint + `${nurseId}/doctors/${doctorId}/change-dispo`, null);
+    return this.http.patch(this.endpoint + `/${nurseId}/doctors/${doctorId}/change-dispo`, null);
   }
 
   assignQueuerToDoctor(queuerId, doctorId) {
-    return this.http.patch(this.endpoint + `queuers/${queuerId}/assign-to-doctor/${doctorId}`, null);
+    return this.http.patch(this.endpoint + `/queuers/${queuerId}/assign-to-doctor/${doctorId}`, null);
   }
 
   changeAppointmentStatus(appId) {

@@ -11119,3 +11119,23 @@ body.sidebar-toggled footer.sticky-footer {
   color: var(--success) !important;
   font-weight: 600;
 }
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--success) 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary); 
+}
+
+.btn.disabled {
+  display: none !important;
+}
